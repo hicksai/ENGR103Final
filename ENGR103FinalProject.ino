@@ -171,7 +171,7 @@ void loop() {
       //Checks if the user has won (completed 20 rounds). 
       //If so, ends game.
       //If not, assigns another action
-      if (roundNumber>=20) {
+      if (roundNumber==19) {
       // User Wins!
       userWins = 1;
       returnScore();
