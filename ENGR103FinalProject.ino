@@ -3,8 +3,7 @@
 #include <Wire.h>
 #include <SPI.h>
 
-//Instances of AsyncDelay
-
+//Instance of AsyncDelay
 AsyncDelay delayTime;
 
 // Words taken from Adafruit Circuit Playground Express "Speech Demos"
@@ -64,11 +63,13 @@ int actionType = 0;
 
 void setup() {
 
+  //Setup stuff
   Serial.begin(9600);
   CircuitPlayground.begin();
   CircuitPlayground.setAccelRange(LIS3DH_RANGE_4_G);
   randomSeed(analogRead(1));
 
+  //Declaring pin modes
   pinMode(switchPin, INPUT_PULLUP);
   pinMode(rightButton, INPUT_PULLDOWN);
   pinMode(leftButton, INPUT_PULLDOWN);
@@ -78,13 +79,16 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(rightButton), RButtonISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(leftButton), LButtonISR, FALLING);
 
+  //Assign action and begin first round
   actionType = random(0,4);
   assignAction();
-  delayTime.start(1000, AsyncDelay::MILLIS);
+  delayTime.start(1500, AsyncDelay::MILLIS);
 }
 
 void loop() {
+  //Only excicuites while the game is running
   while(gameRunning) {
+    // Displays the round number with Neo Pixels
     if (roundNumber<10) {
       for (int i = 0; i<=roundNumber; i++) {
         CircuitPlayground.setPixelColor(i,0,0,255);
@@ -100,8 +104,11 @@ void loop() {
         CircuitPlayground.setPixelColor(i,0,0,0);
       }
     }
+
+    //If the timer has finished
     if (delayTime.isExpired()) {
       
+      //This switch case checks if the designated action flag has been raised
       switch (actionType) {
         case 0:
           if (!RButtonFlag) {
@@ -160,6 +167,10 @@ void loop() {
           }
           break;
       }
+
+      //Checks if the user has won (completed 20 rounds). 
+      //If so, ends game.
+      //If not, assigns another action
       if (roundNumber>=20) {
       // User Wins!
       userWins = 1;
@@ -177,6 +188,7 @@ void loop() {
   }
 }
 
+//Says the score if the game has finished
 void returnScore() {
   switch (score) {
     case 0:
